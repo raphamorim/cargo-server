@@ -21,13 +21,13 @@ $ cargo binstall ou
 Once `ou` is installed, you can run this command inside your project's directory. It will create by default in `8000` port:
 
 ```
-$ cargo ou
+$ ou
 ```
 
 You can also specify the port by using --port
 
 ```
-$ cargo ou --port 3000
+$ ou --port 3000
 ```
 
 Result:
