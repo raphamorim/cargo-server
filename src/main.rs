@@ -7,11 +7,11 @@ use tower_http::services::ServeDir;
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
-    /// Filepath
-    // #[clap(default_value_t = String::from(""))]
-    // file: u64,
+    /// Path
+    #[clap(default_value_t = String::from("./"))]
+    path: String,
 
-    /// Scale screen
+    /// Port
     #[clap(short, long, value_parser, default_value_t = 8000)]
     port: u16,
 }
@@ -20,8 +20,9 @@ struct Args {
 async fn main() {
     let args = Args::parse();
     let port = &args.port;
+    let path = &args.path;
     let app: _ =
-        Router::new().fallback(get_service(ServeDir::new("./")).handle_error(handle_error));
+        Router::new().fallback(get_service(ServeDir::new(path)).handle_error(handle_error));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], *port as u16));
     let ou = format!("{}{}{}", "\x1b[93m", "[ou]", "\x1b[0m");

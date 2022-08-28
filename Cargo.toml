@@ -1,6 +1,6 @@
 [package]
 name = "ou"
-version = "0.1.1"
+version = "0.1.2"
 description = "Helps you serve a static site, single page application or just a static file"
 license = "MPL-2.0"
 authors = ["Raphael Amorim <rapha850@gmail.com>"]

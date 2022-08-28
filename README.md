@@ -30,6 +30,12 @@ You can also specify the port by using --port
 $ ou --port 3000
 ```
 
+You can also specify the path
+
+```
+$ ou ../path-to-site --port 8123
+```
+
 Result:
 
 ![Result ou](resources/demo.png)
