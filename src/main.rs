@@ -1,7 +1,8 @@
 extern crate clap;
+use std::fs;
+use std::{io, net::SocketAddr};
 use axum::{http::StatusCode, response::IntoResponse, routing::get_service, Router};
 use clap::Parser;
-use std::{io, net::SocketAddr};
 use tower_http::services::ServeDir;
 
 #[derive(Parser, Debug)]
@@ -26,6 +27,14 @@ async fn main() {
 
     let addr = SocketAddr::from(([127, 0, 0, 1], *port as u16));
     let ou = format!("{}{}{}", "\x1b[93m", "[ou]", "\x1b[0m");
+
+    let files = fs::read_dir(path).unwrap();
+    let mut files_str = String::new();
+    for file in files {
+        files_str = files_str + " " + &file.as_ref().unwrap().path().into_os_string().into_string().ok().unwrap();
+    }
+
+    println!("{} files:{}", ou, files_str);
     println!("{} listening on {}", ou, addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
