@@ -3,6 +3,7 @@ use axum::{http::StatusCode, response::IntoResponse, routing::get_service, Route
 use clap::Parser;
 use std::fs;
 use std::{io, net::SocketAddr};
+use tower_http::cors::{AllowOrigin, CorsLayer};
 use tower_http::services::ServeDir;
 
 #[derive(Parser, Debug)]
@@ -22,8 +23,19 @@ async fn main() {
     let args = Args::parse();
     let port = &args.port;
     let path = &args.path;
-    let app: _ =
-        Router::new().fallback(get_service(ServeDir::new(path)).handle_error(handle_error));
+    let cors = CorsLayer::new()
+        .allow_origin(AllowOrigin::predicate(
+            // |_origin: &HeaderValue, _request_parts: &RequestParts| {
+            |_, _| {
+                // origin.as_bytes().contains(b"...")
+                true
+            },
+        ))
+        .allow_credentials(true);
+
+    let app: _ = Router::new()
+        .fallback(get_service(ServeDir::new(path)).handle_error(handle_error))
+        .layer(cors);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], *port as u16));
     let ou = format!("{}{}{}", "\x1b[93m", "[ou]", "\x1b[0m");

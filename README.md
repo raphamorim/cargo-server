@@ -1,6 +1,8 @@
 # ou
 
-`ou` helps you serve a static site, single page application or just a static file (no matter if on your device or on the local network). It also provides a neat interface for listing the directory's contents:
+`ou` helps you serve a static site, single page application or just a static file (no matter if on your device or on the local network). It also provides a neat interface for listing the directory's contents.
+
+Pre-built binaries are available on the [Github Releases tab](https://github.com/raphamorim/ou/releases).
 
 You can use cargo to install:
 

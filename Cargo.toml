@@ -1,6 +1,6 @@
 [package]
 name = "ou"
-version = "0.1.4"
+version = "0.1.5"
 description = "Helps you serve a static site, single page application or just a static file"
 license = "MPL-2.0"
 authors = ["Raphael Amorim <rapha850@gmail.com>"]
@@ -15,7 +15,7 @@ include = ["src", "README.md"]
 [dependencies]
 axum = "0.5.15"
 tokio = { version = "1.20.1", features = ["full"] }
-tower-http = { version = "0.3.4", features = ["fs"] }
+tower-http = { version = "0.3.4", features = ["fs", "cors"] }
 clap = { version = "3.2.17", features = ["derive"] }
 
 [[bin]]
