@@ -1,8 +1,8 @@
 extern crate clap;
-use std::fs;
-use std::{io, net::SocketAddr};
 use axum::{http::StatusCode, response::IntoResponse, routing::get_service, Router};
 use clap::Parser;
+use std::fs;
+use std::{io, net::SocketAddr};
 use tower_http::services::ServeDir;
 
 #[derive(Parser, Debug)]
@@ -31,10 +31,24 @@ async fn main() {
     let files = fs::read_dir(path).unwrap();
     let mut files_str = String::new();
     for file in files {
-        files_str = files_str + " " + &file.as_ref().unwrap().path().into_os_string().into_string().ok().unwrap();
+        files_str = files_str
+            + " "
+            + &file
+                .as_ref()
+                .unwrap()
+                .path()
+                .into_os_string()
+                .into_string()
+                .ok()
+                .unwrap();
     }
 
     println!("{} files:{}", ou, files_str);
+
+    if !files_str.contains("./index.html") {
+        println!("{} consider to add an 'index.html' file", ou);
+    }
+
     println!("{} listening on {}", ou, addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
