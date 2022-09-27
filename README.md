@@ -26,16 +26,22 @@ Once `ou` is installed, you can run this command inside your project's directory
 $ ou
 ```
 
-You can also specify the port by using --port
+To specify the port, you can use `--port`:
 
 ```
 $ ou --port 3000
 ```
 
-You can also specify the path
+To open in your browser after run the command just add `--open`:
 
 ```
-$ ou ../path-to-site --port 8123
+$ ou --open
+```
+
+You can also set a custom path instead of the root:
+
+```
+$ ou ../path-to-site
 ```
 
 Result:
