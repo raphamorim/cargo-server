@@ -1,6 +1,6 @@
 [package]
 name = "ou"
-version = "0.1.5"
+version = "0.1.6"
 description = "Helps you serve a static site, single page application or just a static file"
 license = "MPL-2.0"
 authors = ["Raphael Amorim <rapha850@gmail.com>"]
@@ -17,6 +17,7 @@ axum = "0.5.15"
 tokio = { version = "1.20.1", features = ["full"] }
 tower-http = { version = "0.3.4", features = ["fs", "cors"] }
 clap = { version = "3.2.17", features = ["derive"] }
+open = "3.0.3"
 
 [[bin]]
 name = "ou"

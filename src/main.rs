@@ -16,6 +16,10 @@ struct Args {
     /// Port
     #[clap(short, long, value_parser, default_value_t = 8000)]
     port: u16,
+
+    /// Open
+    #[clap(short, long, value_parser, default_value_t = false)]
+    open: bool,
 }
 
 #[tokio::main]
@@ -23,14 +27,9 @@ async fn main() {
     let args = Args::parse();
     let port = &args.port;
     let path = &args.path;
+    let open = &args.open;
     let cors = CorsLayer::new()
-        .allow_origin(AllowOrigin::predicate(
-            // |_origin: &HeaderValue, _request_parts: &RequestParts| {
-            |_, _| {
-                // origin.as_bytes().contains(b"...")
-                true
-            },
-        ))
+        .allow_origin(AllowOrigin::predicate(|_, _| true))
         .allow_credentials(true);
 
     let app: _ = Router::new()
@@ -61,7 +60,19 @@ async fn main() {
         println!("{} consider to add an 'index.html' file", ou);
     }
 
-    println!("{} listening on {}", ou, addr);
+    println!("{} listening on: {}", ou, addr);
+
+    if open == &true {
+        let url: String = format!("http://{}", addr);
+        match open::that(url.to_string()) {
+            Ok(()) => println!("{} opened '{}' successfully on browser.", ou, url),
+            Err(err) => eprintln!(
+                "{} an error occurred when opening {} on browser: {}",
+                ou, url, err
+            ),
+        }
+    }
+
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
