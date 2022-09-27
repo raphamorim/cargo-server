@@ -64,7 +64,7 @@ async fn main() {
 
     if open == &true {
         let url: String = format!("http://{}", addr);
-        match open::that(url.to_string()) {
+        match open::that(&url) {
             Ok(()) => println!("{} opened '{}' successfully on browser.", ou, url),
             Err(err) => eprintln!(
                 "{} an error occurred when opening {} on browser: {}",
