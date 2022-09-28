@@ -1,5 +1,8 @@
 # cargo-server
 
+> tl;dr: Does the same as "python -m http.server" or "
+npx serve" but for Rust ecosystem.
+
 `cargo-server` helps you serve a static site, single page application or just a static file (no matter if on your device or on the local network). It also provides a neat interface for listing the directory's contents.
 
 Pre-built binaries are available on the [Github Releases tab](https://github.com/raphamorim/cargo-server/releases).
