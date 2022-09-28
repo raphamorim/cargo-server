@@ -38,10 +38,16 @@ To open in your browser after run the command just add `--open`:
 $ cargo server --open
 ```
 
-You can also set a custom path instead of the root:
+You can also set a custom path using --path:
 
 ```
-$ cargo server ../path-to-site
+$ cargo server --path /Users/raphamorim/Documents/simple-wasm-frontend-app
+```
+
+Also is possible to run without any stdout using --quiet:
+
+```
+$ cargo server --quiet --open --path /Users/raphamorim/Documents/simple-wasm-frontend-app
 ```
 
 Result:

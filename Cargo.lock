@@ -88,6 +88,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec8a7b6a70fde80372154c65702f00a0f56f3e1c36abbc6c440484be248856db"
 
 [[package]]
+name = "cargo-server"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "clap",
+ "open",
+ "tokio",
+ "tower-http",
+]
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -389,17 +400,6 @@ name = "os_str_bytes"
 version = "6.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9ff7415e9ae3fff1225851df9e0d9e4e5479f947619774677a63572e55e80eff"
-
-[[package]]
-name = "ou"
-version = "0.1.6"
-dependencies = [
- "axum",
- "clap",
- "open",
- "tokio",
- "tower-http",
-]
 
 [[package]]
 name = "parking_lot"

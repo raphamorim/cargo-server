@@ -2,7 +2,6 @@
 **/*.rs.bk
 
 /target
-ou
 
 .DS_Store
 log

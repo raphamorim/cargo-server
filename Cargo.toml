@@ -1,15 +1,15 @@
 [package]
 name = "cargo-server"
-version = "0.1.0"
+version = "0.1.1"
 description = "Helps you serve a static site, single page application or just a static file"
 license = "MPL-2.0"
 authors = ["Raphael Amorim <rapha850@gmail.com>"]
 edition = "2021"
 keywords = ["cargo", "server", "static", "single-page", "https"]
 categories = ["command-line-utilities", "development-tools"]
-documentation = "https://github.com/raphamorim/ou#readme"
-repository = "https://github.com/raphamorim/ou"
-rust-version = "1.62.1"
+documentation = "https://github.com/raphamorim/cargo-server#readme"
+repository = "https://github.com/raphamorim/cargo-server"
+rust-version = "1.64.0"
 include = ["src", "README.md"]
 
 [dependencies]
