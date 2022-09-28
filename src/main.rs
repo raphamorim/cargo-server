@@ -113,7 +113,7 @@ async fn main() {
     if !*quiet {
         println!("{} path: {}", server, server_path);
 
-        if !files_str.contains("./index.html") {
+        if !files_str.contains("index.html") {
             println!("{} hint: consider to add an 'index.html' file", server);
         }
 
