@@ -1,6 +1,6 @@
 [package]
 name = "cargo-server"
-version = "0.1.8"
+version = "0.1.9"
 description = "Helps you serve a static site, single page application or just a static file"
 license = "MPL-2.0"
 authors = ["Raphael Amorim <rapha850@gmail.com>"]
@@ -18,3 +18,4 @@ tokio = { version = "1.21.2", features = ["full"] }
 tower-http = { version = "0.3.4", features = ["fs", "cors"] }
 clap = { version = "4.0.1", features = ["derive"] }
 open = "3.0.3"
+http = "0.2.8"
