@@ -1,7 +1,5 @@
 extern crate clap;
 
-use std::env;
-
 use axum::{
     http::Request,
     middleware::{self, Next},
@@ -10,6 +8,7 @@ use axum::{
 use axum::{http::StatusCode, response::IntoResponse, routing::get_service, Router};
 use clap::Parser;
 use http::HeaderValue;
+use std::env;
 use std::fs;
 use std::{io, net::SocketAddr};
 use tower_http::cors::{AllowOrigin, CorsLayer};
@@ -19,6 +18,10 @@ const PREFIX: &str = "\x1b[93m[server]\x1b[0m";
 const OPTSET_OUTPUT: &str = "OUTPUT";
 const OPTSET_DEBUGGING: &str = "DEBUGGING";
 const OPTSET_BEHAVIOUR: &str = "BEHAVIOUR";
+
+async fn handle_error(_err: io::Error) -> impl IntoResponse {
+    (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong...")
+}
 
 #[derive(Parser, Debug)]
 #[clap(author, name = "server", bin_name = "cargo", version, about)]
@@ -107,9 +110,7 @@ async fn main() {
 
     let args = Cli::parse();
 
-    let command = match args.command {
-        Action::Server(command) => command,
-    };
+    let Action::Server(command) = args.command;
 
     let port = &command.port;
     let path = &command.path;
@@ -118,7 +119,8 @@ async fn main() {
     let version = &command.version;
 
     if *version {
-        println!("0.2.0");
+        // TODO: Fix to do it automatically
+        println!("0.2.1");
         return;
     }
 
@@ -144,7 +146,7 @@ async fn main() {
         .layer(middleware::from_fn(propagate_custom_headers))
         .layer(cors);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], *port as u16));
+    let addr = SocketAddr::from(([127, 0, 0, 1], *port));
 
     let files = fs::read_dir(&server_path).unwrap();
     let mut files_str = String::new();
@@ -194,8 +196,4 @@ async fn main() {
         .serve(app.into_make_service())
         .await
         .unwrap();
-}
-
-async fn handle_error(_err: io::Error) -> impl IntoResponse {
-    (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong...")
 }

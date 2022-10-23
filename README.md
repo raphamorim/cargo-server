@@ -4,8 +4,6 @@
 
 `cargo-server` helps you serve a static site, single page application or just a static file (no matter if on your device or on the local network). It also provides a neat interface for listing the directory's contents.
 
-Pre-built binaries are available on the [Github Releases tab](https://github.com/raphamorim/cargo-server/releases).
-
 You can use cargo to install:
 
 ```
@@ -19,8 +17,6 @@ $ cargo binstall cargo-server
 ```
 
 ## Quick example
-
-![Tree](resources/tree.png)
 
 Once `cargo-server` is installed, you can run this command inside your project's directory. It will create by default in `8000` port:
 

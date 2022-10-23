@@ -5,7 +5,12 @@ test-simple-wasm-server:
 		cargo server --help && \
 		echo ">>> Check version" && \
 		cargo server --version && \
+		echo ">>> Open with port and" && \
 		cargo server --port 8123 --open
+
+lint:
+	cargo fmt -- --check --color always
+	cargo clippy --all-targets -- -D warnings
 
 # rustc --print target-list
 release:
