@@ -1,6 +1,11 @@
 test-simple-wasm-server:
 	cargo install --path ./
-	cd ./examples/simple-wasm-frontend-app && cargo server --port 8123 --open
+	cd ./examples/simple-wasm-frontend-app && \
+		echo ">>> Check help" && \
+		cargo server --help && \
+		echo ">>> Check version" && \
+		cargo server --version && \
+		cargo server --port 8123 --open
 
 # rustc --print target-list
 release:
