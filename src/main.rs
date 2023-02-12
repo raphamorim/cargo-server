@@ -120,7 +120,7 @@ async fn main() {
 
     if *version {
         // TODO: Fix to do it automatically
-        println!("0.2.1");
+        println!("0.2.2");
         return;
     }
 
@@ -164,29 +164,26 @@ async fn main() {
     }
 
     if !*quiet {
-        println!("{} path: {}", PREFIX, server_path);
+        println!("{PREFIX} path: {server_path}");
 
         if !files_str.contains("index.html") {
-            println!("{} hint: consider to add an 'index.html' file", PREFIX);
+            println!("{PREFIX} hint: consider to add an 'index.html' file");
         }
 
-        println!("{} listening on: {}", PREFIX, addr);
+        println!("{PREFIX} listening on: {addr}");
     }
 
     if open == &true {
-        let url: String = format!("http://{}", addr);
+        let url: String = format!("http://{addr}");
         match open::that(&url) {
             Ok(()) => {
                 if !*quiet {
-                    println!("{} opened '{}' successfully on browser.", PREFIX, url)
+                    println!("{PREFIX} opened '{url}' successfully on browser.")
                 }
             }
             Err(err) => {
                 if !*quiet {
-                    eprintln!(
-                        "{} an error occurred when opening {} on browser: {}",
-                        PREFIX, url, err
-                    )
+                    eprintln!("{PREFIX} an error occurred when opening {url} on browser: {err}")
                 }
             }
         }

@@ -1,6 +1,6 @@
 [package]
 name = "cargo-server"
-version = "0.2.1"
+version = "0.2.2"
 description = "Helps you serve a static site, single page application or just a static file"
 license = "MPL-2.0"
 authors = ["Raphael Amorim <rapha850@gmail.com>"]
@@ -9,13 +9,12 @@ keywords = ["cargo", "server", "static", "single-page", "https"]
 categories = ["command-line-utilities", "development-tools"]
 documentation = "https://github.com/raphamorim/cargo-server#readme"
 repository = "https://github.com/raphamorim/cargo-server"
-rust-version = "1.64.0"
 include = ["src", "README.md"]
 
 [dependencies]
-axum = "0.5.16"
-tokio = { version = "1.21.2", features = ["full"] }
-tower-http = { version = "0.3.4", features = ["fs", "cors"] }
+axum = "0.5.17"
+tokio = { version = "1.25.0", features = ["full"] }
+tower-http = { version = "0.3.5", features = ["fs", "cors"] }
 clap = { version = "4.0.1", features = ["derive"] }
 open = "3.0.3"
 http = "0.2.8"
