@@ -1,19 +1,19 @@
 extern crate clap;
 
-use std::sync::Arc;
-use axum::Json;
 use axum::routing::get;
+use axum::Json;
+use axum::{extract::Path, http::StatusCode, response::IntoResponse, routing::get_service, Router};
 use axum::{
     extract::State,
     http::Request,
     middleware::{self, Next},
     response::Response,
 };
-use axum::{http::StatusCode, extract::Path, response::IntoResponse, routing::get_service, Router};
 use clap::Parser;
 use http::HeaderValue;
 use std::env;
 use std::fs;
+use std::sync::Arc;
 use std::{io, net::SocketAddr};
 use tower_http::cors::{AllowOrigin, CorsLayer};
 use tower_http::services::ServeDir;
@@ -123,21 +123,26 @@ async fn propagate_custom_headers<B>(req: Request<B>, next: Next<B>) -> Result<R
     Ok(response)
 }
 
-async fn json_handler(
+async fn json_handler_with_param(
     // TODO: Improve into param iter
-    Path(param_0): Path<String>,
+    Path(param): Path<String>,
     // TODO: Move to hashmap
-    State(state): State<Arc<AppState>>
+    State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
     // Example
     // String::from("{\"data\":{\"userId\":\"$1\",\"givenName\":\"Raphael\",\"country\":\"br\"}}");
-    let input = state.json_data.replace("{!0}", &param_0);
+    let input = state.json_data.replace("{!0}", &param);
     let json_value: serde_json::Value = serde_json::from_str(&input).unwrap_or_default();
     (StatusCode::OK, Json(json_value))
 }
 
+async fn json_handler(State(state): State<Arc<AppState>>) -> impl IntoResponse {
+    let json_value: serde_json::Value = serde_json::from_str(&state.json_data).unwrap_or_default();
+    (StatusCode::OK, Json(json_value))
+}
+
 struct AppState {
-    json_data: String
+    json_data: String,
 }
 
 #[tokio::main]
@@ -237,18 +242,26 @@ async fn main() {
             .await
             .unwrap();
     } else {
-        let shared_state = Arc::new(AppState { json_data: json.to_string() });
-        let app = Router::new()
-            .route(route, get(json_handler))
-            .layer(cors)
-            .with_state(shared_state);
+        let shared_state = Arc::new(AppState {
+            json_data: json.to_string(),
+        });
+        let app = if json.contains("{!0}") {
+            Router::new()
+                .route(route, get(json_handler_with_param))
+                .layer(cors)
+                .with_state(shared_state)
+        } else {
+            Router::new()
+                .route(route, get(json_handler))
+                .layer(cors)
+                .with_state(shared_state)
+        };
 
         axum::Server::bind(&addr)
             .serve(app.into_make_service())
             .with_graceful_shutdown(shutdown_signal())
             .await
             .unwrap();
-
     };
 }
 

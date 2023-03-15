@@ -8,7 +8,14 @@ test-file-server:
 		echo ">>> Open with port and" && \
 		cargo server --port 8123 --open
 
-test-routes:
+test-route:
+	cargo install --path ./
+	cargo server \
+		--route '/users' \
+		--json '{"users":[{"data":{"userId":"1","givenName":"Raphael","country":"br"}},{"data":{"userId":"2","givenName":"Emil","country":"se"}}]}' \
+		--port 8123
+
+test-route-with-params:
 	cargo install --path ./
 	cargo server \
 		--route '/users/:userId' \

@@ -73,7 +73,7 @@ cargo server \
 
 Result:
 
-![Demo JSON](resources/demo-json.png)
+![Demo JSON](resources/demo-json-with-params.png)
 
 #### `--json` without params
 
