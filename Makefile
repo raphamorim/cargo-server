@@ -15,6 +15,10 @@ test-route:
 		--json '{"users":[{"data":{"userId":"1","givenName":"Raphael","country":"br"}},{"data":{"userId":"2","givenName":"Emil","country":"se"}}]}' \
 		--port 8123
 
+test-all-routes:
+	cargo install --path ./
+	cargo server --all-routes --json '{"id": "1"}' --port 8123
+
 test-route-with-params:
 	cargo install --path ./
 	cargo server \

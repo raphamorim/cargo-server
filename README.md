@@ -73,7 +73,7 @@ cargo server \
 
 Result:
 
-![Demo JSON](resources/demo-json-with-params.png)
+![Demo JSON with params](resources/demo-json-with-params.png)
 
 #### `--json` without params
 
@@ -88,6 +88,20 @@ Result:
 
 ![Demo JSON](resources/demo-json.png)
 
+#### `--all-routes`
+
+It will add support for GET, POST, DELETE and PATCH methods as well.
+
+```bash
+cargo server \
+	--all-routes \
+	--json '{"id": "1"}' \
+	--port 8123
+```
+
+Result:
+
+![Demo JSON all routes](resources/demo-all-routes.png)
 
 ## --ngnix
 

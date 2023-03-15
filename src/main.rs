@@ -1,6 +1,7 @@
 extern crate clap;
 
-use axum::routing::get;
+#[allow(unused_imports)]
+use axum::routing::{delete, get, patch, post};
 use axum::Json;
 use axum::{extract::Path, http::StatusCode, response::IntoResponse, routing::get_service, Router};
 use axum::{
@@ -18,7 +19,7 @@ use std::{io, net::SocketAddr};
 use tower_http::cors::{AllowOrigin, CorsLayer};
 use tower_http::services::ServeDir;
 
-const VERSION: &str = "0.3.4";
+const VERSION: &str = "0.3.5";
 const PREFIX: &str = "\x1b[93m[server]\x1b[0m";
 const OPTSET_OUTPUT: &str = "OUTPUT";
 const OPTSET_DEBUGGING: &str = "DEBUGGING";
@@ -60,6 +61,15 @@ struct Server {
         help_heading = OPTSET_BEHAVIOUR,
     )]
     pub route: String,
+
+    /// Route
+    #[clap(
+        long = "all-routes",
+        value_parser,
+        default_value_t = false,
+        help_heading = OPTSET_BEHAVIOUR,
+    )]
+    pub all_routes: bool,
 
     /// Json
     #[clap(
@@ -164,6 +174,7 @@ async fn main() {
     let version = &command.version;
     let route = &command.route;
     let json = &command.json;
+    let all_routes = &command.all_routes;
 
     if *version {
         println!("{VERSION}");
@@ -220,7 +231,7 @@ async fn main() {
         }
     }
 
-    if route.is_empty() && json.is_empty() {
+    if json.is_empty() {
         if !*quiet {
             println!("{PREFIX} path: {server_path}");
 
@@ -241,7 +252,7 @@ async fn main() {
             .with_graceful_shutdown(shutdown_signal())
             .await
             .unwrap();
-    } else {
+    } else if !route.is_empty() {
         if !*quiet {
             println!("{PREFIX} \x1b[35m{route}\x1b[0m -> \x1b[34m{json:?}\x1b[0m");
             println!("{PREFIX} listening on: \x1b[35m{addr}\x1b[0m");
@@ -261,6 +272,31 @@ async fn main() {
                 .layer(cors)
                 .with_state(shared_state)
         };
+
+        axum::Server::bind(&addr)
+            .serve(app.into_make_service())
+            .with_graceful_shutdown(shutdown_signal())
+            .await
+            .unwrap();
+    } else if *all_routes {
+        if !*quiet {
+            println!("{PREFIX} listening all routes on: \x1b[35m{addr}\x1b[0m");
+        }
+
+        let shared_state = Arc::new(AppState {
+            json_data: json.to_string(),
+        });
+
+        let app = Router::new()
+            .route(
+                "/*all",
+                get(json_handler)
+                    .post(json_handler)
+                    .patch(json_handler)
+                    .delete(json_handler),
+            )
+            .layer(cors)
+            .with_state(shared_state);
 
         axum::Server::bind(&addr)
             .serve(app.into_make_service())
