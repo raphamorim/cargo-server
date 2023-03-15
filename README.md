@@ -48,7 +48,7 @@ cargo server --path ./examples/simple-wasm-frontend-app
 
 Result:
 
-![Demo](resources/demo.png)
+![Demo](resources/demo-file-server.png)
 
 ## --quiet
 
