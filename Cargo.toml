@@ -1,6 +1,6 @@
 [package]
 name = "cargo-server"
-version = "0.2.2"
+version = "0.3.0"
 description = "Helps you serve a static site, single page application or just a static file"
 license = "MPL-2.0"
 authors = ["Raphael Amorim <rapha850@gmail.com>"]
@@ -12,7 +12,8 @@ repository = "https://github.com/raphamorim/cargo-server"
 include = ["src", "README.md"]
 
 [dependencies]
-axum = "0.5.17"
+axum = "0.6.11"
+serde_json = "1.0.81"
 tokio = { version = "1.25.0", features = ["full"] }
 tower-http = { version = "0.3.5", features = ["fs", "cors"] }
 clap = { version = "4.0.1", features = ["derive"] }

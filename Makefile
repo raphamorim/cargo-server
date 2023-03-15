@@ -1,4 +1,4 @@
-test-simple-wasm-server:
+test-file-server:
 	cargo install --path ./
 	cd ./examples/simple-wasm-frontend-app && \
 		echo ">>> Check help" && \
@@ -7,6 +7,13 @@ test-simple-wasm-server:
 		cargo server --version && \
 		echo ">>> Open with port and" && \
 		cargo server --port 8123 --open
+
+test-routes:
+	cargo install --path ./
+	cargo server \
+		--route '/users/:userId' \
+		--json '{"data":{"userId":"{!0}","givenName":"Raphael","country":"se"}}' \
+		--port 8123
 
 lint:
 	cargo fmt -- --check --color always

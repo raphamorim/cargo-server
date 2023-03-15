@@ -1,11 +1,15 @@
 extern crate clap;
 
+use std::sync::Arc;
+use axum::Json;
+use axum::routing::get;
 use axum::{
+    extract::State,
     http::Request,
     middleware::{self, Next},
     response::Response,
 };
-use axum::{http::StatusCode, response::IntoResponse, routing::get_service, Router};
+use axum::{http::StatusCode, extract::Path, response::IntoResponse, routing::get_service, Router};
 use clap::Parser;
 use http::HeaderValue;
 use std::env;
@@ -14,6 +18,7 @@ use std::{io, net::SocketAddr};
 use tower_http::cors::{AllowOrigin, CorsLayer};
 use tower_http::services::ServeDir;
 
+const VERSION: &str = "0.3.0";
 const PREFIX: &str = "\x1b[93m[server]\x1b[0m";
 const OPTSET_OUTPUT: &str = "OUTPUT";
 const OPTSET_DEBUGGING: &str = "DEBUGGING";
@@ -46,6 +51,24 @@ struct Server {
         help_heading = OPTSET_BEHAVIOUR,
     )]
     pub path: String,
+
+    /// Route
+    #[clap(
+        long = "route",
+        value_parser,
+        default_value = "",
+        help_heading = OPTSET_BEHAVIOUR,
+    )]
+    pub route: String,
+
+    /// Json
+    #[clap(
+        long = "json",
+        value_parser,
+        default_value = "",
+        help_heading = OPTSET_BEHAVIOUR,
+    )]
+    pub json: String,
 
     /// Version
     #[clap(
@@ -100,6 +123,23 @@ async fn propagate_custom_headers<B>(req: Request<B>, next: Next<B>) -> Result<R
     Ok(response)
 }
 
+async fn json_handler(
+    // TODO: Improve into param iter
+    Path(param_0): Path<String>,
+    // TODO: Move to hashmap
+    State(state): State<Arc<AppState>>
+) -> impl IntoResponse {
+    // Example
+    // String::from("{\"data\":{\"userId\":\"$1\",\"givenName\":\"Raphael\",\"country\":\"br\"}}");
+    let input = state.json_data.replace("{!0}", &param_0);
+    let json_value: serde_json::Value = serde_json::from_str(&input).unwrap_or_default();
+    (StatusCode::OK, Json(json_value))
+}
+
+struct AppState {
+    json_data: String
+}
+
 #[tokio::main]
 async fn main() {
     let mut server_path: String = env::current_dir()
@@ -117,10 +157,11 @@ async fn main() {
     let quiet = &command.quiet;
     let open = &command.open;
     let version = &command.version;
+    let route = &command.route;
+    let json = &command.json;
 
     if *version {
-        // TODO: Fix to do it automatically
-        println!("0.2.2");
+        println!("{VERSION}");
         return;
     }
 
@@ -140,11 +181,6 @@ async fn main() {
     if !path.is_empty() {
         server_path = path.to_string();
     }
-
-    let app: _ = Router::new()
-        .fallback(get_service(ServeDir::new(&server_path)).handle_error(handle_error))
-        .layer(middleware::from_fn(propagate_custom_headers))
-        .layer(cors);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], *port));
 
@@ -189,8 +225,52 @@ async fn main() {
         }
     }
 
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    if route.is_empty() && json.is_empty() {
+        let app = Router::new()
+            .fallback(get_service(ServeDir::new(&server_path)).handle_error(handle_error))
+            .layer(middleware::from_fn(propagate_custom_headers))
+            .layer(cors);
+
+        axum::Server::bind(&addr)
+            .serve(app.into_make_service())
+            .with_graceful_shutdown(shutdown_signal())
+            .await
+            .unwrap();
+    } else {
+        let shared_state = Arc::new(AppState { json_data: json.to_string() });
+        let app = Router::new()
+            .route(route, get(json_handler))
+            .layer(cors)
+            .with_state(shared_state);
+
+        axum::Server::bind(&addr)
+            .serve(app.into_make_service())
+            .with_graceful_shutdown(shutdown_signal())
+            .await
+            .unwrap();
+
+    };
+}
+
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        tokio::signal::ctrl_c()
+            .await
+            .expect("Expect shutdown CTRL+C handler");
+    };
+
+    #[cfg(unix)] /* conditional compilation depending on target family = unix */ let terminate = async {
+        tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+            .expect("Expected shutdown signal handler")
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = ctrl_c => {},
+        _ = terminate => {},
+    }
 }
