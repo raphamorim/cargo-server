@@ -18,7 +18,7 @@ use std::{io, net::SocketAddr};
 use tower_http::cors::{AllowOrigin, CorsLayer};
 use tower_http::services::ServeDir;
 
-const VERSION: &str = "0.3.1";
+const VERSION: &str = "0.3.2";
 const PREFIX: &str = "\x1b[93m[server]\x1b[0m";
 const OPTSET_OUTPUT: &str = "OUTPUT";
 const OPTSET_DEBUGGING: &str = "DEBUGGING";
@@ -204,16 +204,6 @@ async fn main() {
                 .unwrap();
     }
 
-    if !*quiet {
-        println!("{PREFIX} path: {server_path}");
-
-        if !files_str.contains("index.html") {
-            println!("{PREFIX} hint: consider to add an 'index.html' file");
-        }
-
-        println!("{PREFIX} listening on: {addr}");
-    }
-
     if open == &true {
         let url: String = format!("http://{addr}");
         match open::that(&url) {
@@ -231,6 +221,16 @@ async fn main() {
     }
 
     if route.is_empty() && json.is_empty() {
+        if !*quiet {
+            println!("{PREFIX} path: {server_path}");
+
+            if !files_str.contains("index.html") {
+                println!("{PREFIX} hint: consider to add an 'index.html' file");
+            }
+
+            println!("{PREFIX} listening on: \x1b[35m{addr}\x1b[0m");
+        }
+
         let app = Router::new()
             .fallback(get_service(ServeDir::new(&server_path)).handle_error(handle_error))
             .layer(middleware::from_fn(propagate_custom_headers))
@@ -242,6 +242,11 @@ async fn main() {
             .await
             .unwrap();
     } else {
+        if !*quiet {
+            println!("{PREFIX} \x1b[35m{route}\x1b[0m -> \x1b[34m{json:?}\x1b[0m");
+            println!("{PREFIX} listening on: \x1b[35m{addr}\x1b[0m");
+        }
+
         let shared_state = Arc::new(AppState {
             json_data: json.to_string(),
         });
