@@ -18,7 +18,7 @@ use std::{io, net::SocketAddr};
 use tower_http::cors::{AllowOrigin, CorsLayer};
 use tower_http::services::ServeDir;
 
-const VERSION: &str = "0.3.3";
+const VERSION: &str = "0.3.4";
 const PREFIX: &str = "\x1b[93m[server]\x1b[0m";
 const OPTSET_OUTPUT: &str = "OUTPUT";
 const OPTSET_DEBUGGING: &str = "DEBUGGING";

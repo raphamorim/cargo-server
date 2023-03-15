@@ -1,6 +1,6 @@
 [package]
 name = "cargo-server"
-version = "0.3.3"
+version = "0.3.4"
 description = "Helps you serve a static site, single page application or just a static file"
 license = "MPL-2.0"
 authors = ["Raphael Amorim <rapha850@gmail.com>"]
@@ -22,3 +22,20 @@ tower-http = { version = "0.3.5", features = ["fs", "cors"] }
 clap = { version = "4.0.1", features = ["derive"] }
 open = "3.0.3"
 http = "0.2.8"
+
+[profile.release]
+lto = true
+panic = "abort"
+codegen-units = 1
+
+[package.metadata.binstall]
+bin-dir = "{ name }-v{ version }-{ target }/{ bin }{ format }"
+
+[package.metadata.deb]
+maintainer = "Raphael Amorim <rapha850@gmail.com>"
+license-file = ["LICENSE", "0"]
+section = "devel"
+# conf-files = [] # look me up when config file lands
+assets = [
+  ["target/release/cargo-server", "usr/bin/", "755"],
+]
